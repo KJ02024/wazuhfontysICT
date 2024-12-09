@@ -10,7 +10,7 @@ generate certs:
 
 $ bash wazuh/certs/indexer_cluster/generate_certs.sh
 
-$ bash wazuh/certs/dashboard_http/generate_certs.sh
+$ bash "wazuh/certs/dashboard_http/generate_certs (1).sh"
 
 Apply conf en images
 
