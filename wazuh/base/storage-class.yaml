@@ -1,14 +1,9 @@
-# Copyright (C) 2019, Wazuh Inc.
-#
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
+# In een kleine omgeving wil je niet onnodig complexe infrastructuur. Door geen dynamische provisioner in te zetten verminder je het aantal
+# benodigde tooling en resourcegebruik voor een kleine omgeving als onze CTF omgeving maakt dit het beheer makkelijker en overzichtelijker
 
-# Wazuh StorageClass
-
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
+apiVersion: storage.k8s.io/v1       # De API-versie die gebruikt wordt voor het StorageClass object.
+kind: StorageClass                  # Het type Kubernetes-resource is een StorageClass.
 metadata:
-  name: wazuh-storage
-# provisioner: k8s.io/minikube-hostpath
+  name: wazuh-storage               # De naam van deze StorageClass is 'wazuh-storage'.
+provisioner: kubernetes.io/no-provisioner # Geeft aan dat er geen dynamische provisioner is; PV's moeten handmatig worden aangemaakt.
+volumeBindingMode: WaitForFirstConsumer # Geeft aan dat het binden van volumes gebeurt op het moment dat een pod de PVC daadwerkelijk gebruikt.
