@@ -6,4 +6,4 @@ kind: StorageClass                  # Het type Kubernetes-resource is een Storag
 metadata:
   name: wazuh-storage               # De naam van deze StorageClass is 'wazuh-storage'.
 provisioner: kubernetes.io/no-provisioner # Geeft aan dat er geen dynamische provisioner is; PV's moeten handmatig worden aangemaakt.
-volumeBindingMode: WaitForFirstConsumer # Geeft aan dat het binden van volumes gebeurt op het moment dat een pod de PVC daadwerkelijk gebruikt.
+volumeBindingMode: Immediate # Geeft aan dat het binden van volumes gebeurt op het moment dat een pod de PVC daadwerkelijk gebruikt.
