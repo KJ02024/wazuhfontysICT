@@ -8,9 +8,9 @@ $ cd wazuhfontysICT
 
 generate certs:
 
-$ wazuh/certs/indexer_cluster/generate_certs.sh
+$ bash wazuh/certs/indexer_cluster/generate_certs.sh
 
-$ wazuh/certs/dashboard_http/generate_certs.sh
+$ bash wazuh/certs/dashboard_http/generate_certs.sh
 
 Apply conf en images
 
