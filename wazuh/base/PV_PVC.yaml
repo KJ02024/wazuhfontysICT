@@ -1,23 +1,23 @@
 apiVersion: v1 # De API-versie voor Kubernetes core objecten, hier voor het PersistentVolume (PV).
 kind: PersistentVolume # Het type object is een PersistentVolume, een stuk opslag.
-metadata:
-  name: wazuh-pv # De naam van het PersistentVolume is 'wazuh-pv'.
+metadata: # De naam van het PersistentVolume is 'wazuh-pv'.
+  name: wazuh-pv
 spec:
   capacity:
     storage: 20Gi # De capaciteit van dit PV is voor nu 20GB even kijken of dit voldoende is anders opschalen
   volumeMode: Filesystem # Het PV wordt benaderd als een bestandssysteem.
   accessModes:
     - ReadWriteOnce # Toegangsmode: ReadWriteOnce betekent dat slechts één node tegelijk kan schrijven/lezen.
-    hostPath:
+  hostPath:
     path: "/data/wazuh" # Het PV gebruikt een lokale directory op de host genaamd '/data/wazuh'. Deze map moet op de node bestaan.
 ---
-apiVersion: v1 # Opnieuw v1 voor core Kubernetes objecten, nu voor de PersistentVolumeClaim (PVC).
+apiVersion: v1  # Opnieuw v1 voor core Kubernetes objecten, nu voor de PersistentVolumeClaim (PVC).
 kind: PersistentVolumeClaim # Het type object is een PVC, een aanvraag voor opslag.
 metadata:
   name: wazuh-pvc # De naam van de PVC is 'wazuh-pvc'.
 spec:
-    accessModes:
-    - ReadWriteOnce                 
+  accessModes:
+    - ReadWriteOnce
   resources:
     requests:
       storage: 20Gi # De PVC vraagt om 20 gigabyte opslagruimte.
