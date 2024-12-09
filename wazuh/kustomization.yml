@@ -47,7 +47,6 @@ resources: #Lijst van Kubernetes bestanden die standaard worden ingeladen door d
   - base/storage-class.yaml
   - base/PV_PVC.yaml
 
-
   - secrets/wazuh-api-cred-secret.yaml
   - secrets/wazuh-authd-pass-secret.yaml
   - secrets/wazuh-cluster-key-secret.yaml
