@@ -1,22 +1,35 @@
-# Copyright (C) 2019, Wazuh Inc.
-#
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
+# In een kleine omgeving wil je niet onnodig complexe infrastructuur. Door geen dynamische provisioner in te zetten verminder je het aantal
+# benodigde tooling en resourcegebruik voor een kleine omgeving als onze CTF omgeving maakt dit het beheer makkelijker en overzichtelijker
 
-# Wazuh StorageClass
-
-apiVersion: storage.k8s.io/v1
-kind: StorageClass # definieert een StorageClass waarmee dynamische volume-provisioning mogelijk wordt.
+apiVersion: storage.k8s.io/v1       # De API-versie die gebruikt wordt voor het StorageClass object.
+kind: StorageClass                  # Het type Kubernetes-resource is een StorageClass.
 metadata:
-  name: wazuh-storage # De naam van de StorageClass waarmee deze kan worden aangeroepen in PersistentVolumeClaims (PVC’s).
-
-# Microk8s is our standard for local development
-provisioner: microk8s.io/hostpath
-
-# In case you're running Minikube you can comment the line above and use this one
-# provisioner: k8s.io/minikube-hostpath
-
-# If you're using a different provider you can list storage classes
-# with: "kubectl get sc" and look for the column "Provisioner"
+  name: wazuh-storage               # De naam van deze StorageClass is 'wazuh-storage'.
+provisioner: kubernetes.io/no-provisioner # Geeft aan dat er geen dynamische provisioner is; PV's moeten handmatig worden aangemaakt.
+volumeBindingMode: WaitForFirstConsumer # Geeft aan dat het binden van volumes gebeurt op het moment dat een pod de PVC daadwerkelijk gebruikt.
+---
+apiVersion: v1                      # De API-versie voor Kubernetes core objecten, hier voor het PersistentVolume (PV).
+kind: PersistentVolume              # Het type object is een PersistentVolume, een stuk opslag.
+metadata:
+  name: wazuh-pv                    # De naam van het PersistentVolume is 'wazuh-pv'.
+spec:
+  capacity:
+    storage: 10Gi                   # De capaciteit van dit PV is voor nu 10GB even kijken of dit voldoende is anders opschalen
+  volumeMode: Filesystem            # Het PV wordt benaderd als een bestandssysteem.
+  accessModes:
+    - ReadWriteOnce                 # Toegangsmode: ReadWriteOnce betekent dat slechts één node tegelijk kan schrijven/lezen.
+  storageClassName: wazuh-storage   # Het PV hoort bij de 'wazuh-storage' StorageClass, zodat PVC's met deze class hieraan kunnen binden.
+  hostPath:
+    path: "/data/wazuh"             # Het PV gebruikt een lokale directory op de host genaamd '/data/wazuh'. Deze map moet op de node bestaan.
+---
+apiVersion: v1                      # Opnieuw v1 voor core Kubernetes objecten, nu voor de PersistentVolumeClaim (PVC).
+kind: PersistentVolumeClaim         # Het type object is een PVC, een aanvraag voor opslag.
+metadata:
+  name: wazuh-pvc                   # De naam van de PVC is 'wazuh-pvc'.
+spec:
+  storageClassName: wazuh-storage   # De PVC vraagt om opslag van de StorageClass 'wazuh-storage'.
+  accessModes:
+    - ReadWriteOnce                 
+  resources:
+    requests:
+      storage: 10Gi                  # De PVC vraagt om 5 gigabyte opslagruimte.
