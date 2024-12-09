@@ -45,6 +45,8 @@ configMapGenerator:
 resources: #Lijst van Kubernetes bestanden die standaard worden ingeladen door deze Kustomization
   - base/wazuh-ns.yaml
   - base/storage-class.yaml
+  - base/PV_PVC.yaml
+
 
   - secrets/wazuh-api-cred-secret.yaml
   - secrets/wazuh-authd-pass-secret.yaml
