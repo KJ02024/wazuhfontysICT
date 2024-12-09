@@ -10,6 +10,5 @@ kind: Kustomization # Hiermee wordt aangegeven dat dit een Kustomization resourc
 resources: 
 - ../../wazuh # Dit geeft aan dat de resources in de map ../../wazuh bevinden onderdeel zijn van deze kustomization. Kustomize zal daarmee het Kustomization yaml bestand in wazuh_CTFchallenge/wazuh inladen
 patches: # Een lijst van patch-bestanden die toegepast worden deze patches bevinden zich in de map wazuh_CTFchallenge/envs/local-env
-- path: storage-class.yaml
 - path: indexer-resources.yaml
 - path: wazuh-resources.yaml
