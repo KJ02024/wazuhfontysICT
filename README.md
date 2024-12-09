@@ -1,4 +1,4 @@
-This is a modified private clone of https://github.com/wazuh/wazuh-kubernetes. The config is modified to suit the kubernetes cluster of the CTF challenge.
+This is a modified clone of https://github.com/wazuh/wazuh-kubernetes. The config and yaml files are modified or added to suit the kubernetes cluster of the fontys CTF challenge.
 
 instructions:
 
