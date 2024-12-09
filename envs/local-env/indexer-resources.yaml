@@ -1,0 +1,25 @@
+# Copyright (C) 2019, Wazuh Inc.
+#
+# This program is a free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License (version 2) as published by the FSF - Free Software
+# Foundation.
+
+apiVersion: apps/v1
+kind: StatefulSet #Een StatefulSet wordt gebruikt voor stateful applicaties met bijvoorbeeld stabiele netwerk-ID’s en opslag.
+metadata:
+  name: wazuh-indexer # Dit is de naam van de StatefulSet
+  namespace: wazuh # Hiermee wordt de StatefulSet in de wazuh namespace geplaatst in plaats van in de standaard namespace.
+spec: 
+  replicas: 1 # Dit geeft aan hoeveel replica’s (pod-instances) er van deze StatefulSet moeten draaien in dit geval dus één.
+  template:
+    spec:
+      containers:
+        - name: wazuh-indexer # De naam van de container binnen de pod. Meestal dezelfde of soortgelijke naam als de StatefulSet of de applicatie die hij draait.
+          resources:
+            requests: # Minimale hoeveelheid CPU en geheugen die de container nodig heeft om te kunnen schedulen.
+              cpu: 500m
+              memory: 1Gi
+            limits: # maximale limiet van CPU en geheugen die de container mag gebruiken.
+              cpu: 1
+              memory: 2Gi

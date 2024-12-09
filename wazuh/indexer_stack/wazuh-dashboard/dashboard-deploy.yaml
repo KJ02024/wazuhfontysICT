@@ -1,0 +1,100 @@
+# Copyright (C) 2019, Wazuh Inc.
+#
+# This program is a free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License (version 2) as published by the FSF - Free Software
+# Foundation.
+
+# Dashboard Deployment
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wazuh-dashboard
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector: # Hiermee wordt aangegeven welke pods tot deze Deployment behoren. Er wordt geselecteerd op pods met het label app: wazuh-dashboard. De Deployment zal ervoor zorgen dat er altijd één pod met dit label aanwezig is.
+    matchLabels:
+      app: wazuh-dashboard
+  template:
+    metadata:
+      labels:
+        app: wazuh-dashboard # De pod krijgt dit label zodat de selector van de Deployment ermee matcht.
+      name: wazuh-dashboard
+    spec:
+      volumes:
+        - name: config  # De ConfigMap bevat configuratiebestanden.
+          configMap:
+            name: dashboard-conf
+        - name: dashboard-certs # bevat certificaten en keys voor SSL
+          secret:
+            secretName: dashboard-certs 
+      containers:
+        - name: wazuh-dashboard # Naam van de container
+          image: 'wazuh/wazuh-dashboard:4.9.2' # De container-image die gepulled wordt dit is wazuh-dashboard versie 4.9.2 op het moment van schrijven de nieuwste versie gehost op Docker Hub
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+          volumeMounts: # Hiermee worden de volumes in de container gemount
+            - name: config
+              mountPath: /usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
+              subPath: opensearch_dashboards.yml
+              readOnly: false
+            - name: dashboard-certs
+              mountPath: /usr/share/wazuh-dashboard/certs/cert.pem
+              readOnly: true
+              subPath: cert.pem
+            - name: dashboard-certs
+              mountPath: /usr/share/wazuh-dashboard/certs/key.pem
+              readOnly: true
+              subPath: key.pem
+            - name: dashboard-certs
+              mountPath: /usr/share/wazuh-dashboard/certs/root-ca.pem
+              subPath: root-ca.pem
+              readOnly: true
+          ports: # De container luistert op poort 5601
+            - containerPort: 5601
+              name: dashboard
+          env: # De dashboard kan verbinden met de indexer (OpenSearch) en Wazuh API met opgegeven credentials en URLs.
+            - name: INDEXER_URL
+              value: 'https://indexer:9200'
+            - name: INDEXER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: indexer-cred
+                  key: username
+            - name: INDEXER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: indexer-cred
+                  key: password
+            - name: DASHBOARD_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dashboard-cred
+                  key: username
+            - name: DASHBOARD_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dashboard-cred
+                  key: password
+            - name: SERVER_SSL_ENABLED
+              value: "true"
+            - name: SERVER_SSL_CERTIFICATE
+              value: /usr/share/wazuh-dashboard/certs/cert.pem
+            - name: SERVER_SSL_KEY
+              value: /usr/share/wazuh-dashboard/certs/key.pem
+            - name: WAZUH_API_URL
+              value: https://wazuh-manager-master-0.wazuh-cluster
+            - name: API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-api-cred
+                  key: username
+            - name: API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-api-cred
+                  key: password
