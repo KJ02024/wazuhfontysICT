@@ -4,12 +4,11 @@ metadata:
   name: wazuh-pv                    # De naam van het PersistentVolume is 'wazuh-pv'.
 spec:
   capacity:
-    storage: 10Gi                   # De capaciteit van dit PV is voor nu 10GB even kijken of dit voldoende is anders opschalen
+    storage: 20Gi                   # De capaciteit van dit PV is voor nu 20GB even kijken of dit voldoende is anders opschalen
   volumeMode: Filesystem            # Het PV wordt benaderd als een bestandssysteem.
   accessModes:
     - ReadWriteOnce                 # Toegangsmode: ReadWriteOnce betekent dat slechts één node tegelijk kan schrijven/lezen.
-  storageClassName: wazuh-storage   # Het PV hoort bij de 'wazuh-storage' StorageClass, zodat PVC's met deze class hieraan kunnen binden.
-  hostPath:
+    hostPath:
     path: "/data/wazuh"             # Het PV gebruikt een lokale directory op de host genaamd '/data/wazuh'. Deze map moet op de node bestaan.
 ---
 apiVersion: v1                      # Opnieuw v1 voor core Kubernetes objecten, nu voor de PersistentVolumeClaim (PVC).
@@ -17,9 +16,8 @@ kind: PersistentVolumeClaim         # Het type object is een PVC, een aanvraag v
 metadata:
   name: wazuh-pvc                   # De naam van de PVC is 'wazuh-pvc'.
 spec:
-  storageClassName: wazuh-storage   # De PVC vraagt om opslag van de StorageClass 'wazuh-storage'.
-  accessModes:
+    accessModes:
     - ReadWriteOnce                 
   resources:
     requests:
-      storage: 10Gi                  # De PVC vraagt om 5 gigabyte opslagruimte.
+      storage: 20Gi                  # De PVC vraagt om 20 gigabyte opslagruimte.
