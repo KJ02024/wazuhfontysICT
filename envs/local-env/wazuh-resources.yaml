@@ -9,6 +9,6 @@ apiVersion: apps/v1
 kind: StatefulSet 
 metadata:
   name: wazuh-manager-worker # Naam van de StatefulSet.
-  namespace: monitoring # Plaatst de StatefulSet in de ‘monitoring’ namespace
+  namespace: default # Plaatst de StatefulSet in de ‘monitoring’ namespace
 spec:
   replicas: 1
