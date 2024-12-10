@@ -21,5 +21,4 @@ spec:
     - name: cluster
       port: 1516
       targetPort: 1516
-      nodePort: 32445 # Vaste NodePort waarop de service toegankelijk is via de Node IP adres
   clusterIP: None
