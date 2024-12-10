@@ -1,30 +1,18 @@
-# Copyright (C) 2019, Wazuh Inc.
-#
-# This program is a free software; you can redistribute it
-# and/or modify it under the terms of the GNU General Public
-# License (version 2) as published by the FSF - Free Software
-# Foundation.
-
-# Dashboard service
-
-apiVersion: v1
-kind: Service # Dit geeft aan dat het hier om een Kubernetes Service gaat een Service maakt netwerktoegang tot een of meer Pods mogelijk vaak via load balancing en service discovery.
-metadata:
-  name: dashboard
-  namespace: monitoring
-  labels:
-    app: wazuh-dashboard
-    # dns: route53
+apiVersion: v1 # API-versie die wordt gebruikt om het serviceobject te definiëren
+kind: Service # Dit geeft aan dat dit een Service is in Kubernetes
+metadata: # Metadata voor de Service
+  name: dashboard # Naam van de service hier "dashboard"
+  namespace: monitoring # Namespace waarin deze service zich bevindt
+  labels: # Labels voor de service, nuttig voor selectie en organisatie
+    app: wazuh-dashboard # Label dat aangeeft dat deze service bij de Wazuh-dashboard hoort
   annotations:
-    # domainName: 'changeme'
-    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'changeme'
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: '443'
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
-spec:
-  type: LoadBalancer
-  selector:
-    app: wazuh-dashboard
-  ports: # De poort waarop de pods zelf luisteren. De Service zal inkomende requests op poort 443 doorsturen naar poort 5601 van de dashboard pod
-    - name: dashboard
-      port: 443
-      targetPort: 5601
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https # Definieert dat het backendprotocol HTTPS is
+spec: # Specificatie van de service
+  type: NodePort # Type service, hier ingesteld op NodePort zodat deze toegankelijk is via een Node IP
+  selector: # Selecteert welke pods deze service beheert
+    app: wazuh-dashboard # De pods met dit label worden gekoppeld aan deze service
+  ports: # Poorten die door de service worden blootgesteld
+    - name: dashboard # Naam van de poort, handig voor referentie
+      port: 443 # Externe poort van de service toegankelijk voor gebruikers
+      targetPort: 5601 # Interne poort in de container waar verkeer naar wordt doorgestuurd
+      nodePort: 30443 # Vaste NodePort waarop de service toegankelijk is via de Node IP adres
