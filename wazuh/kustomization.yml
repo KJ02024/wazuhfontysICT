@@ -9,7 +9,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 # Alle resources die door deze Kustomization worden gegeneerd of samengevoegd krijgen de monitoring namespace toegewezen
-namespace: monitoring  
+namespace: default  
 # Dit is een instructie voor Kustomize om Kubernetes Secrets te genereren op basis van de opgegeven bestanden.
 secretGenerator:
   - name: indexer-certs
