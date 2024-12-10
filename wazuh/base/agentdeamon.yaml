@@ -35,7 +35,7 @@ spec:
               readOnly: true            # Mount de wazuh-agent-config ConfigMap op /var/ossec/etc, agent leest hier zijn config
           env:
             - name: WAZUH_MANAGER
-              value: "wazuh-cluster.wazuh.svc.cluster.local" # Omgevingsvariabele met de naam of IP van de Wazuh-manager, zodat de agent weet waarheen te sturen
+              value: "wazuh-workers.wazuh.svc.cluster.local" # Omgevingsvariabele met de naam of IP van de Wazuh-manager, zodat de agent weet waarheen te sturen
             # eventueel meer env vars voor auth keys of andere settings
       hostNetwork: false                # hostNetwork op false, betekent dat Pod eigen netwerknamespace krijgt, niet die van de host
       volumes:
