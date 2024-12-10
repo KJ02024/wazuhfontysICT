@@ -11,7 +11,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: wazuh-indexer
-  namespace: monitoring
+  namespace: default
   labels:
     app: wazuh-indexer
 spec:
