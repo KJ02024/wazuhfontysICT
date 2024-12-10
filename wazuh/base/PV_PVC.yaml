@@ -1,27 +1,71 @@
-apiVersion: v1                     # De API-versie voor Kubernetes core objecten, hier voor het PersistentVolume (PV).
-kind: PersistentVolume             # Het type object is een PersistentVolume, een stuk opslag.
+# PersistentVolume voor de eerste PVC, bijvoorbeeld voor de wazuh-indexer.
+apiVersion: v1
+kind: PersistentVolume
 metadata:
-  name: wazuh-pv                   # De naam van het PersistentVolume is 'wazuh-pv'.
+  name: wazuh-indexer-pv  # Naam van dit PV, specifiek voor de indexer.
 spec:
   capacity:
-    storage: 20Gi                  # De capaciteit van dit PV is nu 20GB
-  volumeMode: Filesystem            # Het PV wordt benaderd als een bestandssysteem
+    storage: 5Gi # Grootte van deze volume, moet >= PVC request zijn even kijken of 5g genoeg is.
+  volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce                 # Toegangsmodus: ReadWriteOnce betekent dat slechts één node tegelijk kan lezen/schrijven.
-  storageClassName: wazuh-storage   # Koppel dit PV aan de 'wazuh-storage' StorageClass.
+    - ReadWriteOnce
+  storageClassName: wazuh-storage  # Verwijs naar dezelfde StorageClass
   hostPath:
-    path: "/data/wazuh"             # Het PV gebruikt een lokale directory op de host.
-    type: DirectoryOrCreate         # Maakt de directory aan als deze niet bestaat.
-
+    path: "/data/wazuh-indexer"   # Unieke directory voor de indexer data.
+    type: DirectoryOrCreate       # Maakt directory aan indien niet aanwezig.
+  nodeAffinity: # Node affinity zorgt ervoor dat deze PV alleen aan een pod op een specifieke node gebonden kan worden.
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node-role.kubernetes.io/storage
+          operator: In
+          values:
+          - "true"
 ---
-apiVersion: v1                     # Opnieuw v1 voor Kubernetes core objecten, nu voor de PersistentVolumeClaim (PVC).
-kind: PersistentVolumeClaim        # Het type object is een PVC, een aanvraag voor opslag.
+# PersistentVolume voor de tweede PVC, bijvoorbeeld voor de wazuh-manager-master.
+apiVersion: v1
+kind: PersistentVolume
 metadata:
-  name: wazuh-pvc                  # De naam van de PVC is 'wazuh-pvc'.
+  name: wazuh-manager-master-pv  # Naam van dit PV voor de manager-master.
 spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce                # De PVC wil RWX-toegang (hier RWO), passend bij het PV.
-  resources:
-    requests:
-      storage: 20Gi                # De PVC vraagt om 20 gigabyte opslagruimte.
-  storageClassName: wazuh-storage   # Verwijs naar dezelfde StorageClass 'wazuh-storage' als in het PV.
+    - ReadWriteOnce
+  storageClassName: wazuh-storage
+  hostPath:
+    path: "/data/wazuh-manager-master"
+    type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node-role.kubernetes.io/storage
+          operator: In
+          values:
+          - "true"
+---
+# PersistentVolume voor de derde PVC, bijvoorbeeld voor de wazuh-manager-worker.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wazuh-manager-worker-pv  # Naam van dit PV voor de manager-worker.
+spec:
+  capacity:
+    storage: 2Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: wazuh-storage
+  hostPath:
+    path: "/data/wazuh-manager-worker"
+    type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: node-role.kubernetes.io/storage
+          operator: In
+          values:
+          - "true"
