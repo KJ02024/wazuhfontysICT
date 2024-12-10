@@ -1,4 +1,4 @@
-# PersistentVolume voor de eerste PVC, bijvoorbeeld voor de wazuh-indexer.
+# PersistentVolume voor de eerste PVC voor de wazuh-indexer.
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -22,7 +22,7 @@ spec:
           values:
           - "true"
 ---
-# PersistentVolume voor de tweede PVC, bijvoorbeeld voor de wazuh-manager-master.
+# PersistentVolume voor de tweede PVC voor de wazuh-manager-master.
 apiVersion: v1
 kind: PersistentVolume
 metadata:
