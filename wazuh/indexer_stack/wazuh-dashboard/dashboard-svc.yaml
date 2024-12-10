@@ -15,4 +15,4 @@ spec: # Specificatie van de service
     - name: dashboard # Naam van de poort, handig voor referentie
       port: 443 # Externe poort van de service toegankelijk voor gebruikers
       targetPort: 5601 # Interne poort in de container waar verkeer naar wordt doorgestuurd
-      nodePort: 30443 # Vaste NodePort waarop de service toegankelijk is via de Node IP adres
+      nodePort: 32444 # Vaste NodePort waarop de service toegankelijk is via de Node IP adres
