@@ -8,7 +8,7 @@ data:
     <ossec_config>
       <client>
         <server>
-          <address>wazuh-cluster.wazuh.svc.cluster.local</address>
+          <address>wazuh-workers.wazuh.svc.cluster.local</address>
           <port>1514</port>
           <protocol>tcp</protocol>
         </server>
