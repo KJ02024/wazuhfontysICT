@@ -14,7 +14,7 @@ spec:
     spec:
       serviceAccountName: wazuh-agent-sa # Pod gebruikt serviceAccount wazuh-agent-sa, voor RBAC toegangen indien nodig
       tolerations:
-        - key: "node-role.kubernetes.io/master"
+        - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule # Staat toe dat Pods ook op master nodes kunnen draaien (of niet), afhankelijk van node-taints
       # De pod moet op alle nodes draaien daarom een daemonset: zo krijg je op elke node een agent-pod
       containers:
