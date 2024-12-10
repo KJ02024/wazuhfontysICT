@@ -2,7 +2,7 @@ apiVersion: v1 # API-versie die wordt gebruikt om het serviceobject te definiër
 kind: Service # Dit geeft aan dat dit een Service is in Kubernetes
 metadata: # Metadata voor de Service
   name: dashboard # Naam van de service hier "dashboard"
-  namespace: monitoring # Namespace waarin deze service zich bevindt
+  namespace: default # Namespace waarin deze service zich bevindt
   labels: # Labels voor de service, nuttig voor selectie en organisatie
     app: wazuh-dashboard # Label dat aangeeft dat deze service bij de Wazuh-dashboard hoort
   annotations:
