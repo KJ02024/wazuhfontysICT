@@ -8,7 +8,7 @@ data:
     <ossec_config>
       <client>
         <server>
-          <address>wazuh-manager-service</address>
+          <address>wazuh.wazuh.svc.cluster.local</address>
           <port>1514</port>
           <protocol>tcp</protocol>
         </server>
@@ -17,5 +17,4 @@ data:
         <directories>/host/etc</directories>
         <directories>/host/var/log</directories>
       </syscheck>
-      <!-- meer config hier -->
     </ossec_config>
