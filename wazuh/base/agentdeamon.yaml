@@ -2,7 +2,7 @@ apiVersion: apps/v1 # API-versie: apps/v1 is nodig voor de DaemonSet resource
 kind: DaemonSet # Type Kubernetes object is een DaemonSet, draait op elke node 
 metadata:
   name: wazuh-agent # Naam van de DaemonSet is 'wazuh-agent'
-  namespace: monitoring # DaemonSet in de 'monitoring' namespace, houdt overzichtelijk 
+  namespace: default # DaemonSet in de 'monitoring' namespace, houdt overzichtelijk 
 spec:
   selector:
     matchLabels:
