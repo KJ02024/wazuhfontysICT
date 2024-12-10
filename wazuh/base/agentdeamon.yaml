@@ -32,7 +32,7 @@ spec:
 
       containers:
         - name: wazuh-agent # Naam van de container in de Pod is wazuh-agent 
-          image: kennypennix/wazuh-agent:latest # De Docker image van de Wazuh-agent
+          image: kennyopennix/wazuh-agent:latest # De Docker image van de Wazuh-agent
           securityContext:
             runAsUser: 0 #Draai als user root (0), nodig om hostbestanden te lezen 
             privileged: false # Niet per se privileged; indien niet nodig, beter op false houden 
