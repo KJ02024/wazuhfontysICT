@@ -11,7 +11,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wazuh-dashboard
-  namespace: monitoring
+  namespace: default
 spec:
   replicas: 1
   selector: # Hiermee wordt aangegeven welke pods tot deze Deployment behoren. Er wordt geselecteerd op pods met het label app: wazuh-dashboard. De Deployment zal ervoor zorgen dat er altijd één pod met dit label aanwezig is.
