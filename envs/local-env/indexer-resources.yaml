@@ -9,7 +9,7 @@ apiVersion: apps/v1
 kind: StatefulSet #Een StatefulSet wordt gebruikt voor stateful applicaties met bijvoorbeeld stabiele netwerk-ID’s en opslag.
 metadata:
   name: wazuh-indexer # Dit is de naam van de StatefulSet
-  namespace: wazuh # Hiermee wordt de StatefulSet in de wazuh namespace geplaatst in plaats van in de standaard namespace.
+  namespace: default # Hiermee wordt de StatefulSet in de wazuh namespace geplaatst in plaats van in de standaard namespace.
 spec: 
   replicas: 1 # Dit geeft aan hoeveel replica’s (pod-instances) er van deze StatefulSet moeten draaien in dit geval dus één.
   template:
