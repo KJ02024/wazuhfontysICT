@@ -1,52 +1,67 @@
-apiVersion: apps/v1 # API-versie: apps/v1 is nodig voor de DaemonSet resource
-kind: DaemonSet # Type Kubernetes object is een DaemonSet draait op elke node
+apiVersion: apps/v1 # API-versie: apps/v1 is nodig voor de DaemonSet resource 
+kind: DaemonSet # Type Kubernetes object is een DaemonSet, draait op elke node 
 metadata:
   name: wazuh-agent # Naam van de DaemonSet is 'wazuh-agent'
-  namespace: monitoring # DaemonSet in de 'monitoring' namespace, houdt overzichtelijk
+  namespace: monitoring # DaemonSet in de 'monitoring' namespace, houdt overzichtelijk 
 spec:
   selector:
     matchLabels:
-      app: wazuh-agent # Selector kijkt naar Pods met label app=wazuh-agent om bij deze DaemonSet te horen
+      app: # Selector kijkt naar Pods met label app=wazuh-agent om bij deze DaemonSet te horen
   template:
     metadata:
       labels:
         app: wazuh-agent # Pods die door deze DaemonSet worden gemaakt krijgen label app=wazuh-agent
     spec:
-      serviceAccountName: wazuh-agent-sa # Pod gebruikt serviceAccount wazuh-agent-sa, voor RBAC toegangen indien nodig
+      serviceAccountName: wazuh-agent-sa # Pod gebruikt serviceAccount wazuh-agent-sa, voor RBAC toegangen indien nodig 
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
-          effect: NoSchedule # Staat toe dat Pods ook op master nodes kunnen draaien (of niet), afhankelijk van node-taints
-      # De pod moet op alle nodes draaien daarom een daemonset: zo krijg je op elke node een agent-pod
+          effect: NoSchedule #Staat toe dat Pods ook op control-plane nodes kunnen draaien, of niet, afhankelijk van node-taints
+      
+      # InitContainer om config te kopiëren van read-only ConfigMap naar writable emptyDir -->
+      initContainers:
+      - name: init-copy-config
+        image: busybox:latest # Simpele image om cp uit te voeren -->
+        command: ["sh", "-c", "cp /tmp/config/ossec.conf /var/ossec/etc/ossec.conf"]
+        volumeMounts:
+          - name: wazuh-agent-config
+            mountPath: /tmp/config
+            readOnly: true # ConfigMap is read-only 
+          - name: wazuh-etc
+            mountPath: /var/ossec/etc
+            # emptyDir is writeable
+
       containers:
-        - name: wazuh-agent # Naam van de container in de Pod is wazuh-agent
-          image: kennyopennix/wazuh-agent:latest # De Docker image van de Wazuh-agent.
+        - name: wazuh-agent # Naam van de container in de Pod is wazuh-agent 
+          image: kennypennix/wazuh-agent:latest # De Docker image van de Wazuh-agent
           securityContext:
-            runAsUser: 0                # Draai als user root (0), nodig om hostbestanden (bijv. /etc, /var/log) te kunnen lezen
-            privileged: false           # Niet per se privileged; indien niet nodig, beter op false houden
+            runAsUser: 0 #Draai als user root (0), nodig om hostbestanden te lezen 
+            privileged: false # Niet per se privileged; indien niet nodig, beter op false houden 
           volumeMounts:
             - name: host-etc
               mountPath: /host/etc
-              readOnly: true            # Mount /etc van de host read-only in /host/etc in de container, agent kan bestanden lezen
+              readOnly: true # Mount /etc van de host read-only in /host/etc
             - name: host-var-log
               mountPath: /host/var/log
-              readOnly: true            # Mount /var/log van de host read-only in /host/var/log, om logs in te zien
-            - name: wazuh-agent-config
+              readOnly: true # Mount /var/log van de host read-only in /host/var/log 
+            - name: wazuh-etc
               mountPath: /var/ossec/etc
-              readOnly: true            # Mount de wazuh-agent-config ConfigMap op /var/ossec/etc, agent leest hier zijn config
+              # Dit is nu een writeable emptyDir waar ossec.conf door initContainer is gekopieerd
           env:
             - name: WAZUH_MANAGER
-              value: "wazuh-workers.wazuh.svc.cluster.local" # Omgevingsvariabele met de naam of IP van de Wazuh-manager, zodat de agent weet waarheen te sturen
-            # eventueel meer env vars voor auth keys of andere settings
-      hostNetwork: false                # hostNetwork op false, betekent dat Pod eigen netwerknamespace krijgt, niet die van de host
+              value: "wazuh-workers.wazuh.svc.cluster.local" # Omgevingsvariabele met het adres van de manager 
+      hostNetwork: false # Pod krijgt eigen netwerk namespace, niet die van de host 
       volumes:
         - name: host-etc
           hostPath:
-            path: /etc                  # hostPath volume: /etc van de host, zodat agent deze kan inspecteren
+            path: /etc
         - name: host-var-log
           hostPath:
-            path: /var/log             # hostPath volume: /var/log van de host, agent inspecteert logs
+            path: /var/log
         - name: wazuh-agent-config
           configMap:
-            name: wazuh-agent-config   # ConfigMap met ossec.conf van de agent, zorgt voor juiste agentconfig zonder image rebuild
+            name: wazuh-agent-config # ConfigMap met ossec.conf van de agent 
+        - name: wazuh-etc
+          emptyDir: {} # EmptyDir is een lege dir in de Pod die writeable is 
   updateStrategy:
-    type: RollingUpdate                # Bij updates wordt RollingUpdate gebruikt: Pods worden netjes vernieuwd zonder downtime
+    type: RollingUpdate # Bij updates wordt RollingUpdate gebruikt: Pods worden netjes vernieuwd zonder downtime -->
+
