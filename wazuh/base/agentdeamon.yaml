@@ -1,8 +1,10 @@
+# still testing this one isnt working yet. A deamonset shuld deploy the wazuh agents across all nodes - KJ
+
 apiVersion: apps/v1 # API-versie: apps/v1 is nodig voor de DaemonSet resource 
 kind: DaemonSet # Type Kubernetes object is een DaemonSet, draait op elke node 
 metadata:
   name: wazuh-agent # Naam van de DaemonSet is 'wazuh-agent'
-  namespace: default # DaemonSet in de 'monitoring' namespace, houdt overzichtelijk 
+  namespace: default # DaemonSet in de 'monitoring' namespace, houdt overzichtelijk/ in overleg veranderd naar default namespace
 spec:
   selector:
     matchLabels:
@@ -17,7 +19,6 @@ spec:
         - key: "node-role.kubernetes.io/control-plane"
           effect: NoSchedule #Staat toe dat Pods ook op control-plane nodes kunnen draaien, of niet, afhankelijk van node-taints
       
-      # InitContainer om config te kopiëren van read-only ConfigMap naar writable emptyDir -->
       initContainers:
       - name: init-copy-config
         image: busybox:latest # Simpele image om cp uit te voeren -->
@@ -45,7 +46,7 @@ spec:
               readOnly: true # Mount /var/log van de host read-only in /host/var/log 
             - name: wazuh-etc
               mountPath: /var/ossec/etc
-              # Dit is nu een writeable emptyDir waar ossec.conf door initContainer is gekopieerd
+             
           env:
             - name: WAZUH_MANAGER
               value: "wazuh-workers.wazuh.svc.cluster.local" # Omgevingsvariabele met het adres van de manager 
