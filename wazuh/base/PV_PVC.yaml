@@ -11,7 +11,7 @@ spec:
     - ReadWriteOnce
   storageClassName: wazuh-storage  # Verwijs naar dezelfde StorageClass
   hostPath:
-    path: "/etc/kubernetes-volumes/wazuh/wazuh-indexer"   # Unieke directory voor de indexer data.
+    path: "/etc/kubernetes-volumes/wazuh/wazuh-indexer"   # Unieke directory voor de indexer data / veranderd van /data/wazuh-indexer naar /etc/kubernetes-volumes/wazuh/wazuh-indexer
     type: DirectoryOrCreate       # Maakt directory aan indien niet aanwezig.
   nodeAffinity: # Node affinity zorgt ervoor dat deze PV alleen aan een pod op een specifieke node gebonden kan worden.
     required:
@@ -35,7 +35,7 @@ spec:
     - ReadWriteOnce
   storageClassName: wazuh-storage
   hostPath:
-    path: "/etc/kubernetes-volumes/wazuh/wazuh-manager-master"
+    path: "/etc/kubernetes-volumes/wazuh/wazuh-manager-master" # veranderd van /data/wazuh-manager-master naar /etc/kubernetes-volumes/wazuh/wazuh-manager-master
     type: DirectoryOrCreate
   nodeAffinity:
     required:
@@ -59,7 +59,7 @@ spec:
     - ReadWriteOnce
   storageClassName: wazuh-storage
   hostPath:
-    path: "/etc/kubernetes-volumes/wazuh/wazuh-manager-worker"
+    path: "/etc/kubernetes-volumes/wazuh/wazuh-manager-worker" # veranderd van /data/wazuh-manager-worker naar /etc/kubernetes-volumes/wazuh/wazuh-manager-worker
     type: DirectoryOrCreate
   nodeAffinity:
     required:
